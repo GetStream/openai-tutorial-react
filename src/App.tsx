@@ -51,11 +51,7 @@ export default function App() {
           Click to Talk to AI
         </button>
       )}
-      {status === "joining" && (
-        <div className="statusbar statusbar_bottom">
-          Waiting for agent to join...
-        </div>
-      )}
+      {status === "joining" && <>Waiting for agent to join...</>}
       {client && call && (
         <StreamVideo client={client}>
           <StreamCall call={call}>

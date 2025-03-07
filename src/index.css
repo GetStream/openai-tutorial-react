@@ -28,21 +28,6 @@ body {
   gap: 10px;
 }
 
-.statusbar {
-  position: fixed;
-  right: 150px;
-  left: 150px;
-  text-align: center;
-}
-
-.statusbar_top {
-  top: 25px;
-}
-
-.statusbar_bottom {
-  bottom: 25px;
-}
-
 .str-video__device-settings__option {
   white-space: nowrap;
 }
