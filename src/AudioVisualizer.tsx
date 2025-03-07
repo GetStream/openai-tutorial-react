@@ -1,11 +1,8 @@
-import { useCallStateHooks } from "@stream-io/video-react-sdk";
 import {
-  useEffect,
-  useState,
-  type CSSProperties,
-  type PropsWithChildren,
-} from "react";
-import { useAgentParticipant } from "./useAgentParticipant";
+  useCallStateHooks,
+  type StreamVideoParticipant,
+} from "@stream-io/video-react-sdk";
+import { useEffect, useState, type CSSProperties } from "react";
 
 import "./AudioVisualizer.css";
 
@@ -23,6 +20,7 @@ export function AudioVisualizer() {
     activity === "listening"
       ? participants.find((p) => p.isLocalParticipant)?.audioStream
       : agent?.audioStream;
+  const volume = useMediaStreamVolume(mediaStream ?? null);
 
   useEffect(() => {
     if (!speaker && activity === "listening") {
@@ -38,22 +36,8 @@ export function AudioVisualizer() {
   }, [speaker, activity]);
 
   return (
-    <div className="audio-visualizer">
-      <Volumeter mediaStream={mediaStream ?? null}>
-        <Aura activity={activity} />
-      </Volumeter>
-    </div>
-  );
-}
-
-function Volumeter(
-  props: PropsWithChildren<{ mediaStream: MediaStream | null }>
-) {
-  const volume = useMediaStreamVolume(props.mediaStream);
-
-  return (
     <div
-      className="audio-visualizer__volumeter"
+      className="audio-visualizer"
       style={
         {
           "--volumeter-scale": Math.min(1 + volume, 1.1),
@@ -61,16 +45,10 @@ function Volumeter(
         } as CSSProperties
       }
     >
-      {props.children}
+      <div
+        className={`audio-visualizer__aura audio-visualizer__aura_${activity}`}
+      />
     </div>
-  );
-}
-
-function Aura(props: { activity: "listening" | "speaking" }) {
-  return (
-    <div
-      className={`audio-visualizer__aura audio-visualizer__aura_${props.activity}`}
-    />
   );
 }
 
@@ -114,4 +92,11 @@ function useMediaStreamVolume(mediaStream: MediaStream | null) {
   }, [mediaStream]);
 
   return volume;
+}
+
+function useAgentParticipant(): StreamVideoParticipant | null {
+  const { useParticipants } = useCallStateHooks();
+  const participants = useParticipants();
+  const agent = participants.find((p) => p.userId === "lucy") ?? null;
+  return agent;
 }

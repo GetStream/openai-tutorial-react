@@ -1,4 +1,4 @@
-.audio-visualizer__volumeter {
+.audio-visualizer {
   transform: scale(var(--volumeter-scale));
   filter: brightness(var(--volumeter-brightness));
 }
@@ -27,11 +27,19 @@
   animation-duration: 2s;
 }
 
+.audio-visualizer__aura_listening::before {
+  background: #f759dbf0;
+}
+
 .audio-visualizer__aura::after {
   width: 40vmin;
   height: 40vmin;
   background: #1af0fff0;
   animation-duration: 5s;
+}
+
+.audio-visualizer__aura_listening::after {
+  background: #f74069f0;
 }
 
 @keyframes aura-pulse {
