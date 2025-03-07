@@ -28,8 +28,9 @@ export async function joinCall(
     user: { id: credentials.userId },
     token: credentials.token,
   });
-  const call = client.call(credentials.callType, credentials.callId);
 
+  const call = client.call(credentials.callType, credentials.callId);
+  await call.camera.disable();
   try {
     await Promise.all([connectAgent(call), call.join({ create: true })]);
   } catch (err) {
