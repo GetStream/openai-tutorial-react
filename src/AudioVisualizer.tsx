@@ -4,8 +4,6 @@ import {
 } from "@stream-io/video-react-sdk";
 import { useEffect, useState, type CSSProperties } from "react";
 
-import "./AudioVisualizer.css";
-
 const listeningCooldownMs = 1000;
 
 export function AudioVisualizer() {

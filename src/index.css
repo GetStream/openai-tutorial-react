@@ -28,6 +28,61 @@ body {
   gap: 10px;
 }
 
+.audio-visualizer {
+  transform: scale(var(--volumeter-scale));
+  filter: brightness(var(--volumeter-brightness));
+}
+
+.audio-visualizer__aura {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.audio-visualizer__aura::before,
+.audio-visualizer__aura::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  border-radius: 50%;
+  mix-blend-mode: plus-lighter;
+  animation: aura-pulse alternate ease-in-out infinite;
+}
+
+.audio-visualizer__aura::before {
+  width: 60vmin;
+  height: 60vmin;
+  background: #0055fff0;
+  animation-delay: -1s;
+  animation-duration: 2s;
+}
+
+.audio-visualizer__aura_listening::before {
+  background: #f759dbf0;
+}
+
+.audio-visualizer__aura::after {
+  width: 40vmin;
+  height: 40vmin;
+  background: #1af0fff0;
+  animation-duration: 5s;
+}
+
+.audio-visualizer__aura_listening::after {
+  background: #f74069f0;
+}
+
+@keyframes aura-pulse {
+  from {
+    transform: scale(0.99);
+    filter: brightness(0.85) blur(50px);
+  }
+  to {
+    transform: scale(1);
+    filter: brightness(1) blur(50px);
+  }
+}
+
 .str-video__device-settings__option {
   white-space: nowrap;
 }
