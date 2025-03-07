@@ -29,16 +29,12 @@ export async function joinCall(
     token: credentials.token,
   });
   const call = client.call(credentials.callType, credentials.callId);
-  call.updateClosedCaptionSettings({
-    maxVisibleCaptions: 0,
-    visibilityDurationMs: 0,
-  });
 
   try {
     await Promise.all([connectAgent(call), call.join({ create: true })]);
   } catch (err) {
-    call.leave();
-    client.disconnectUser();
+    await call.leave();
+    await client.disconnectUser();
     throw err;
   }
 
