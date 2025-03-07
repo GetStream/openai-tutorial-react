@@ -36,5 +36,5 @@ After you have the
 `http://localhost:3000`, run the app:
 
 ```
-yarn run dev
+npm run dev
 ```
