@@ -32,8 +32,8 @@ export default function App() {
         setCall(call);
         setStatus("joined");
       })
-      .catch(() => {
-        console.error("Could not join call");
+      .catch((err) => {
+        console.error("Could not join call", err);
         setStatus("start");
       });
   };
