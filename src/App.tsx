@@ -10,11 +10,9 @@ import {
   useCall,
   useCallStateHooks,
 } from "@stream-io/video-react-sdk";
-import { useEffect, useRef, useState } from "react";
-import { AgentCaptions } from "./AgentCaptions";
+import { useState } from "react";
 import { AudioVisualizer } from "./AudioVisualizer";
 import { fetchCallCredentials, joinCall } from "./join";
-import { useAgentParticipant } from "./useAgentParticipant";
 
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 
@@ -23,9 +21,7 @@ const credentialsPromise = fetchCallCredentials();
 export default function App() {
   const [client, setClient] = useState<StreamVideoClient | null>(null);
   const [call, setCall] = useState<Call | null>(null);
-  const [status, setStatus] = useState<
-    "start" | "joining" | "joined-with-agent" | "end"
-  >("start");
+  const [status, setStatus] = useState<"start" | "joining" | "joined">("start");
 
   const handleJoin = () => {
     setStatus("joining");
@@ -34,6 +30,7 @@ export default function App() {
       .then(([client, call]) => {
         setClient(client);
         setCall(call);
+        setStatus("joined");
       })
       .catch(() => {
         console.error("Could not join call");
@@ -62,10 +59,7 @@ export default function App() {
       {client && call && (
         <StreamVideo client={client}>
           <StreamCall call={call}>
-            <CallLayout
-              onAgentJoined={() => setStatus("joined-with-agent")}
-              onLeave={handleLeave}
-            />
+            <CallLayout onLeave={handleLeave} />
           </StreamCall>
         </StreamVideo>
       )}
@@ -73,34 +67,15 @@ export default function App() {
   );
 }
 
-function CallLayout(props: {
-  onAgentJoined?: () => void;
-  onLeave?: () => void;
-}) {
+function CallLayout(props: { onLeave?: () => void }) {
   const call = useCall();
-  const { useParticipants, useMicrophoneState } = useCallStateHooks();
+  const { useParticipants } = useCallStateHooks();
   const participants = useParticipants();
-  const agentParticipant = useAgentParticipant();
-  const { isSpeakingWhileMuted } = useMicrophoneState();
-  const onAgentJoinedRef = useRef(props.onAgentJoined);
-  onAgentJoinedRef.current = props.onAgentJoined;
-
-  useEffect(() => {
-    if (agentParticipant) {
-      onAgentJoinedRef.current?.();
-    }
-  }, [agentParticipant]);
 
   return (
     <>
       <StreamTheme>
         <ParticipantsAudio participants={participants} />
-        {isSpeakingWhileMuted && (
-          <div className="statusbar statusbar_top">
-            You are muted. Unmute to speak to AI
-          </div>
-        )}
-        <AgentCaptions />
         <div className="call-controls">
           <ToggleAudioPublishingButton menuPlacement="bottom-end" />
           <CancelCallButton
@@ -111,7 +86,7 @@ function CallLayout(props: {
           />
         </div>
       </StreamTheme>
-      {agentParticipant && <AudioVisualizer />}
+      <AudioVisualizer />
     </>
   );
 }
