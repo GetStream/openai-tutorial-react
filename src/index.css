@@ -1,0 +1,48 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font: 18px/20px monospace;
+  margin: 0;
+  background: #00080f;
+  color: #fff;
+}
+
+#root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.call-controls {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.statusbar {
+  position: fixed;
+  right: 150px;
+  left: 150px;
+  text-align: center;
+}
+
+.statusbar_top {
+  top: 25px;
+}
+
+.statusbar_bottom {
+  bottom: 20px;
+}
+
+.str-video__device-settings__option {
+  white-space: nowrap;
+}
