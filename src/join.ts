@@ -3,26 +3,21 @@ import { Call, StreamVideoClient } from "@stream-io/video-react-sdk";
 interface CallCredentials {
   apiKey: string;
   token: string;
+  callType: string;
+  callId: string;
   userId: string;
-  cid: string;
 }
 
 const baseUrl = "http://localhost:3000";
 
-export async function fetchCallCredentials() {
+export async function fetchCallCredentials(): Promise<CallCredentials> {
   const res = await fetch(`${baseUrl}/credentials`);
 
   if (res.status !== 200) {
     throw new Error("Could not fetch call credentials");
   }
 
-  const creds = await res.json();
-  return {
-    apiKey: creds.apiKey,
-    token: creds.token,
-    userId: parseUserIdFromToken(creds.token),
-    cid: creds.cid,
-  };
+  return (await res.json()) as CallCredentials;
 }
 
 export async function joinCall(
@@ -33,8 +28,7 @@ export async function joinCall(
     user: { id: credentials.userId },
     token: credentials.token,
   });
-  const [callType, callId] = credentials.cid.split(":");
-  const call = client.call(callType, callId);
+  const call = client.call(credentials.callType, credentials.callId);
   call.updateClosedCaptionSettings({
     maxVisibleCaptions: 0,
     visibilityDurationMs: 0,
@@ -52,17 +46,11 @@ export async function joinCall(
 }
 
 async function connectAgent(call: Call) {
-  const res = await fetch(`${baseUrl}/${call.cid}/connect`, {
+  const res = await fetch(`${baseUrl}/${call.type}/${call.id}/connect`, {
     method: "POST",
   });
 
   if (res.status !== 200) {
     throw new Error("Could not connect agent");
   }
-}
-
-function parseUserIdFromToken(token: string) {
-  const payload = token.split(".")[1];
-  if (!payload) return "";
-  return JSON.parse(atob(payload)).user_id ?? "";
 }
